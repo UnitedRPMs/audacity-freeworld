@@ -1,42 +1,21 @@
-# Compile options:
-%bcond_with mp3
-#%#global commit dea351aa4820efd7ce8c2254930f942a6590472b
-#%#global shortcommit %(c=%#{commit}; echo ${c:0:7})
+%global realname audacity
+
 
 Name: audacity-freeworld
 
 Version: 2.1.2
-Release: 1%{?dist}
+Release: 2%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
 License: GPLv2
 URL:     http://audacity.sourceforge.net
 
-%define realname audacity
+
 Conflicts: %{realname}
-
-Source0: http://www.fosshub.com/Audacity/download/%{realname}-minsrc-%{version}.tar.xz
-# For alpha git snapshots for testing use the github archive as upstream source:
-#Source0: https://github.com/audacity/%#{name}/archive/%#{commit}/%#{name}-%#{commit}.tar.gz
-# ie https://github.com/audacity/audacity/archive/dea351aa4820efd7ce8c2254930f942a6590472b/audacity-dea351aa4820efd7ce8c2254930f942a6590472b.tar.xz
-#Source0: http://downloads.sf.net/sourceforge/audacity/audacity-minsrc-%#{version}.tar.xz
-%define tartopdir audacity-minsrc-%{version}
-#define tartopdir audacity-%#{commit}
-
-# manual can be installed from the base Fedora audacity package.
-#S#ource1: http://www.fosshub.com/Audacity.html/%{realname}-manual-%{version}.zip
-
-# Patch1: audacity-2.0.4-libmp3lame-default.patch
-# Patch2: audacity-1.3.9-libdir.patch
-# add audio/x-flac
-# remove audio/mpeg, audio/x-mp3
-# enable startup notification
-# add categories Sequencer X-Jack AudioVideoEditing for F-12 Studio feature
-# Patch3: audacity-2.0.2-desktop.in.patch
-Patch4: audacity-2.0.6-non-dl-ffmpeg.patch
-# BZ#1076795:
-# Patch5: audacity-2.0.4-equalization-segfault.patch# BZ#1076795
-
+Source0: https://github.com/audacity/audacity/archive/Audacity-%{version}.zip
+Patch: audacity-ffmpeg.patch
+# gcc6 patch
+Patch1: audacity-60f2322055756e8cacfe96530a12c63e9694482c.patch
 Provides: audacity-nonfree = %{version}-%{release}
 Obsoletes: audacity-nonfree < %{version}-%{release}
 
@@ -62,8 +41,8 @@ BuildRequires: wxGTK3-devel
 %if 0%{?rhel} >= 8 || 0%{?fedora} 
 BuildRequires: libappstream-glib
 %endif
-%{?_with_mp3:BuildRequires: libmad-devel twolame-devel}
-#B#uildRequires: ffmpeg-compat-devel
+BuildRequires: libmad-devel 
+BuildRequires: twolame-devel
 BuildRequires: ffmpeg-devel
 BuildRequires: lame-devel
 # For new symbols in portaudio
@@ -79,38 +58,20 @@ This build has support for mp3 and ffmpeg import/export.
 
 
 %prep
-%setup -q -n %{tartopdir}
+%setup -n audacity-Audacity-%{version}
 
-# Substitute hardcoded library paths.
-#patch1 -b .libmp3lame-default
-#patch2 -p1 -b .libdir
-for i in src/AudacityApp.cpp src/export/ExportMP3.cpp
-do
-    sed -i -e 's!__RPM_LIBDIR__!%{_libdir}!g' $i
-    sed -i -e 's!__RPM_LIB__!%{_lib}!g' $i
-done
-grep -q -s __RPM_LIB * -R && exit 1
-
-# Substitute occurences of "libmp3lame.so" with "libmp3lame.so.0".
-for i in locale/*.po src/export/ExportMP3.cpp
-do
-    sed -i -e 's!libmp3lame.so\([^.]\)!libmp3lame.so.0\1!g' $i
-done
-
-#patch3 -b .desktop.old
-%patch4 -p1 -b .2.0.6-non-dl-ffmpeg
-#patch5 -b .2.0.4-equalization-segfault
-
+%patch -p1
+%patch1 -p1 -b .gcc6
 
 %build
-export PKG_CONFIG_PATH=%{_libdir}/ffmpeg-compat/pkgconfig/
+
 %configure \
     --disable-dynamic-loading \
     --with-help \
     --with-libsndfile=system \
     --with-libsoxr=system \
-    --without-libresample \
-    --without-libsamplerate \
+    --with-libresample \
+    --with-libsamplerate \
     --with-libflac=system \
     --with-ladspa \
     --with-vorbis=system \
@@ -122,8 +83,8 @@ export PKG_CONFIG_PATH=%{_libdir}/ffmpeg-compat/pkgconfig/
     --with-ffmpeg=system \
     --with-libmad=system \
     --with-libtwolame=system \
-    %{?_with_mp3:--with-libmad=system --with-libtwolame=system} \
-    %{!?_with_mp3:--without-libmad --without-libtwolame} \
+    --with-libmad=system \
+    --with-libtwolame=system \
     --with-lame=system \
 %ifnarch %{ix86} x86_64
     --disable-sse \
@@ -131,18 +92,10 @@ export PKG_CONFIG_PATH=%{_libdir}/ffmpeg-compat/pkgconfig/
     %{nil}
 %endif
 
-# ensure we use the system headers for these, note we do this after
-# configure as it wants to run sub-configures in these dirs
-for i in ffmpeg libresample libsoxr libvamp portaudio-v19; do
-   rm -rf lib-src/$i
-done
-
-# _smp_mflags cause problems
-make
-
+make %{?_smp_mflags} V=1
 
 %install
-%make_install
+make install DESTDIR=$RPM_BUILD_ROOT
 rm -Rf $RPM_BUILD_ROOT%{_datadir}/%{realname}/include
 
 %if 0%{?rhel} >= 8 || 0%{?fedora} 
@@ -211,6 +164,12 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
+
+* Thu Jun 02 2016 David Vásquez <davidjeremias82 AT gmail DOT com> - 2.1.2-2
+- Now with ffmpeg 3 support
+- samplerate enabled
+- spec file cleaned
+
 * Thu Mar 03 2016 Sérgio Basto <sergio@serjux.com> - 2.1.2-1
 - Update audacity to 2.1.2 final
 
