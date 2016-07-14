@@ -4,7 +4,7 @@
 Name: audacity-freeworld
 
 Version: 2.1.2
-Release: 3%{?gver}%{dist}
+Release: 4%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
 License: GPLv2
@@ -164,9 +164,12 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
+
+* Thu Jun 30 2016 David Vásquez <davidjeremias82 AT gmail DOT com> - 2.1.2-4
+- Massive rebuild F25
+
 * Sun Jun 26 2016 The UnitedRPMs Project (Key for UnitedRPMs infrastructure) <unitedrpms@protonmail.com> - 2.1.2-3
 - Rebuild with new ffmpeg
-
 
 * Thu Jun 02 2016 David Vásquez <davidjeremias82 AT gmail DOT com> - 2.1.2-2
 - Now with ffmpeg 3 support
