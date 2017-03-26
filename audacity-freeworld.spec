@@ -1,10 +1,13 @@
 %global realname audacity
-
+%global gitdate 20170221
+%global commit0 89c44f9cd67a77d5f05c89057981200bafcb469e
+%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
+%global gver .%{gitdate}git%{shortcommit0}
 
 Name: audacity-freeworld
 
-Version: 2.1.2
-Release: 4%{?gver}%{dist}
+Version: 2.1.3
+Release: 1%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
 License: GPLv2
@@ -12,12 +15,9 @@ URL:     http://audacity.sourceforge.net
 
 
 Conflicts: %{realname}
-Source0: https://github.com/audacity/audacity/archive/Audacity-%{version}.zip
-Patch: audacity-ffmpeg.patch
-# gcc6 patch
-Patch1: audacity-60f2322055756e8cacfe96530a12c63e9694482c.patch
+Source0: https://github.com/audacity/audacity/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 Provides: audacity-nonfree = %{version}-%{release}
-Obsoletes: audacity-nonfree < %{version}-%{release}
+Provides: audacity = %{version}-%{release}
 
 BuildRequires: alsa-lib-devel
 BuildRequires: desktop-file-utils
@@ -38,16 +38,19 @@ BuildRequires: vamp-plugin-sdk-devel >= 2.0
 BuildRequires: zip
 BuildRequires: zlib-devel
 BuildRequires: wxGTK3-devel
+BuildRequires: autoconf
 %if 0%{?rhel} >= 8 || 0%{?fedora} 
 BuildRequires: libappstream-glib
 %endif
 BuildRequires: libmad-devel 
 BuildRequires: twolame-devel
-BuildRequires: ffmpeg-devel
+# BuildRequires: ffmpeg-devel
 BuildRequires: lame-devel
-BuildRequires: python2 python2-devel
+BuildRequires: libudev-devel
 # For new symbols in portaudio
 Requires:      portaudio%{?_isa} >= 19-16
+Requires:      ffmpeg
+
 
 %description
 Audacity is a cross-platform multitrack audio editor. It allows you to
@@ -59,38 +62,15 @@ This build has support for mp3 and ffmpeg import/export.
 
 
 %prep
-%setup -n audacity-Audacity-%{version}
-
-%patch -p1
-%patch1 -p1 -b .gcc6
+%setup -n audacity-%{commit0} 
 
 %build
 
 %configure \
-    --disable-dynamic-loading \
     --with-help \
-    --with-libsndfile=system \
-    --with-libsoxr=system \
-    --with-libresample \
     --with-libsamplerate \
-    --with-libflac=system \
-    --with-ladspa \
-    --with-vorbis=system \
-    --with-id3tag=system \
-    --with-expat=system \
-    --with-soundtouch=system \
-    --with-libvamp=system \
-    --with-portaudio=system \
-    --with-ffmpeg=system \
-    --with-libmad=system \
-    --with-libtwolame=system \
-    --with-libmad=system \
-    --with-libtwolame=system \
-    --with-lame=system \
 %ifnarch %{ix86} x86_64
-    --disable-sse \
-%else
-    %{nil}
+    --disable-sse 
 %endif
 
 make %{?_smp_mflags} V=1
@@ -166,13 +146,16 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 %changelog
 
-* Thu Jun 30 2016 David Vásquez <davidjeremias82 AT gmail DOT com> - 2.1.2-4
+* Tue Feb 21 2017 David Vásquez <davidva AT tutanota DOT com> - 2.1.3-1-20170221git89c44f9
+- Updated to 2.1.3-1-20170221git89c44f9
+
+* Thu Jun 30 2016 David Vásquez <davidva AT tutanota DOT com> - 2.1.2-4
 - Massive rebuild F25
 
 * Sun Jun 26 2016 The UnitedRPMs Project (Key for UnitedRPMs infrastructure) <unitedrpms@protonmail.com> - 2.1.2-3
 - Rebuild with new ffmpeg
 
-* Thu Jun 02 2016 David Vásquez <davidjeremias82 AT gmail DOT com> - 2.1.2-2
+* Thu Jun 02 2016 David Vásquez <davidva AT tutanota DOT com> - 2.1.2-2
 - Now with ffmpeg 3 support
 - samplerate enabled
 - spec file cleaned
