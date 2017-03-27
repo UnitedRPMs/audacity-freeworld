@@ -46,6 +46,7 @@ BuildRequires: libmad-devel
 BuildRequires: twolame-devel
 # BuildRequires: ffmpeg-devel
 BuildRequires: lame-devel
+BuildRequires: python2-devel
 BuildRequires: libudev-devel
 # For new symbols in portaudio
 Requires:      portaudio%{?_isa} >= 19-16
