@@ -17,6 +17,9 @@ Conflicts: %{realname}
 Source0: https://github.com/audacity/audacity/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 # PATCH-FIX-OPENSUSE audacity-flacversion.patch davejplater@gmail.com -- Patch to fix build against libflac 1.3.1+.
 Patch1: audacity-flacversion.patch
+Patch2: audacity-fix-nonsense.patch
+Patch3: audacity-no_buildstamp.patch
+
 Provides: audacity-nonfree = %{version}-%{release}
 Provides: audacity = %{version}-%{release}
 
@@ -166,6 +169,7 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 * Tue Sep 05 2017 David Vásquez <davidva AT tutanota DOT com> - 2.1.3-3-git761bd6b
 - Updated to current commit
 - Portaudio issues solved in F28
+- Patches thanks to dave
 
 * Tue Feb 21 2017 David Vásquez <davidva AT tutanota DOT com> - 2.1.3-1-git89c44f9
 - Updated to 2.1.3-1-20170221git89c44f9
