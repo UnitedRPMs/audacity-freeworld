@@ -1,13 +1,12 @@
 %global realname audacity
-%global gitdate 20170221
-%global commit0 89c44f9cd67a77d5f05c89057981200bafcb469e
+%global commit0 761bd6bf83d7f767c225f0f60047120b3ff91f70
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
-%global gver .%{gitdate}git%{shortcommit0}
+%global gver .git%{shortcommit0}
 
 Name: audacity-freeworld
 
 Version: 2.1.3
-Release: 1%{?gver}%{dist}
+Release: 3%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
 License: GPLv2
@@ -16,9 +15,16 @@ URL:     http://audacity.sourceforge.net
 
 Conflicts: %{realname}
 Source0: https://github.com/audacity/audacity/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
+# PATCH-FIX-OPENSUSE audacity-flacversion.patch davejplater@gmail.com -- Patch to fix build against libflac 1.3.1+.
+Patch1: audacity-flacversion.patch
 Provides: audacity-nonfree = %{version}-%{release}
 Provides: audacity = %{version}-%{release}
 
+BuildRequires: gcc-c++
+BuildRequires: automake
+BuildRequires: autoconf
+BuildRequires: gettext-devel
+BuildRequires: libtool
 BuildRequires: alsa-lib-devel
 BuildRequires: desktop-file-utils
 BuildRequires: expat-devel
@@ -31,7 +37,7 @@ BuildRequires: taglib-devel
 BuildRequires: libogg-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libvorbis-devel
-BuildRequires: portaudio-devel >= 19-16
+BuildRequires: portaudio-devel 
 BuildRequires: soundtouch-devel
 BuildRequires: soxr-devel
 BuildRequires: vamp-plugin-sdk-devel >= 2.0
@@ -63,18 +69,28 @@ This build has support for mp3 and ffmpeg import/export.
 
 
 %prep
-%setup -n audacity-%{commit0} 
+%autosetup -n audacity-%{commit0} 
 
 %build
+
+export CFLAGS="%{optflags} -fno-strict-aliasing"
+export CXXFLAGS="$CFLAGS -std=gnu++11"
+
+aclocal -I m4
+autoconf
 
 %configure \
     --with-help \
     --with-libsamplerate \
+%if 0%{?fedora} >= 28
+    --disable-dynamic-loading \
+    --with-portaudio=local \
+%endif
 %ifnarch %{ix86} x86_64
     --disable-sse 
 %endif
 
-make %{?_smp_mflags} V=1
+make %{?_smp_mflags} V=0
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
@@ -147,7 +163,11 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 %changelog
 
-* Tue Feb 21 2017 David Vásquez <davidva AT tutanota DOT com> - 2.1.3-1-20170221git89c44f9
+* Tue Sep 05 2017 David Vásquez <davidva AT tutanota DOT com> - 2.1.3-3-git761bd6b
+- Updated to current commit
+- Portaudio issues solved in F28
+
+* Tue Feb 21 2017 David Vásquez <davidva AT tutanota DOT com> - 2.1.3-1-git89c44f9
 - Updated to 2.1.3-1-20170221git89c44f9
 
 * Thu Jun 30 2016 David Vásquez <davidva AT tutanota DOT com> - 2.1.2-4
