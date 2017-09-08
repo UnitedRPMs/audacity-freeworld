@@ -69,7 +69,7 @@ This build has support for mp3 and ffmpeg import/export.
 
 
 %prep
-%autosetup -n audacity-%{commit0} 
+%autosetup -n audacity-%{commit0} -p0 
 
 %build
 
