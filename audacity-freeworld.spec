@@ -82,7 +82,7 @@ autoconf
 %configure \
     --with-help \
     --with-libsamplerate \
-%if 0%{?fedora} >= 28
+%if 0%{?fedora} >= 26
     --disable-dynamic-loading \
     --with-portaudio=local \
 %endif
