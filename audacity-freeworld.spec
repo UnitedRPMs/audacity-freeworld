@@ -78,8 +78,7 @@ This build has support for mp3 and ffmpeg import/export.
 
 %build
 
-export CFLAGS="%{optflags} -fno-strict-aliasing"
-export CXXFLAGS="$CFLAGS -std=gnu++11"
+XCFLAGS="-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" XLDFLAGS="-Wl,-z,relro"
 
 aclocal -I m4
 autoconf
