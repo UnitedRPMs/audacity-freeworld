@@ -3,7 +3,7 @@
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
-%global WX_GTK_VER  3.0
+%global WX_GTK_VER  3.0-gtk2
 
 Name: audacity-freeworld
 
