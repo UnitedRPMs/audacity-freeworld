@@ -3,6 +3,8 @@
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
+%global WX_GTK_VER  3.0
+
 Name: audacity-freeworld
 
 Version: 2.1.3
@@ -85,6 +87,7 @@ autoconf
 %configure \
     --with-help \
     --with-libsamplerate \
+    --with-wx-version=%{WX_GTK_VER} \
 %if 0%{?fedora} >= 26
     --disable-dynamic-loading \
     --with-portaudio=local \
