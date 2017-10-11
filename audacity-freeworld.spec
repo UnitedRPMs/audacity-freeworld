@@ -42,9 +42,7 @@ BuildRequires: taglib-devel
 BuildRequires: libogg-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libvorbis-devel
-%if 0%{?fedora} <= 25
 BuildRequires: portaudio-devel 
-%endif
 BuildRequires: soundtouch-devel
 BuildRequires: soxr-devel
 BuildRequires: vamp-plugin-sdk-devel >= 2.0
@@ -82,13 +80,13 @@ XCFLAGS="-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -D_FOR
 
 aclocal -I m4
 autoconf
+autoreconf -vi
 
 %configure \
     --with-help \
     --with-libsamplerate \
 %if 0%{?fedora} >= 26
     --disable-dynamic-loading \
-    --with-portaudio=local \
 %endif
 %ifnarch %{ix86} x86_64
     --disable-sse 
