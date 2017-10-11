@@ -42,7 +42,9 @@ BuildRequires: taglib-devel
 BuildRequires: libogg-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libvorbis-devel
+%if 0%{?fedora} <= 25
 BuildRequires: portaudio-devel 
+%endif
 BuildRequires: soundtouch-devel
 BuildRequires: soxr-devel
 BuildRequires: vamp-plugin-sdk-devel >= 2.0
@@ -59,8 +61,6 @@ BuildRequires: twolame-devel
 BuildRequires: lame-devel
 BuildRequires: python2-devel
 BuildRequires: libudev-devel
-# For new symbols in portaudio
-Requires:      portaudio%{?_isa} >= 19-16
 Requires:      ffmpeg
 
 
@@ -87,7 +87,6 @@ autoconf
 %configure \
     --with-help \
     --with-libsamplerate \
-    --with-wx-version=%{WX_GTK_VER} \
 %if 0%{?fedora} >= 26
     --disable-dynamic-loading \
     --with-portaudio=local \
