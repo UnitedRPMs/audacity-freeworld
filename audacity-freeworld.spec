@@ -6,7 +6,7 @@
 Name: audacity-freeworld
 
 Version: 2.1.3
-Release: 3%{?gver}%{dist}
+Release: 4%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
 License: GPLv2
@@ -165,6 +165,9 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
+
+* Wed Oct 11 2017 Unitedrpms Project <unitedrpms AT protonmail DOT com> - 2.1.3-4-git761bd6b
+- Rebuilt for soundtouch
 
 * Tue Sep 05 2017 David Vásquez <davidva AT tutanota DOT com> - 2.1.3-3-git761bd6b
 - Updated to current commit
