@@ -1,9 +1,7 @@
 %global realname audacity
-%global commit0 761bd6bf83d7f767c225f0f60047120b3ff91f70
+%global commit0 31b820b47c9f43873f318abe2209e4b4d34c79ec
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
-
-%global WX_GTK_VER  3.0-gtk2
 
 Name: audacity-freeworld
 
@@ -59,6 +57,8 @@ BuildRequires: twolame-devel
 BuildRequires: lame-devel
 BuildRequires: python2-devel
 BuildRequires: libudev-devel
+# For new symbols in portaudio
+Requires:      portaudio%{?_isa} >= 19-16
 Requires:      ffmpeg
 
 
@@ -76,17 +76,18 @@ This build has support for mp3 and ffmpeg import/export.
 
 %build
 
-XCFLAGS="-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" XLDFLAGS="-Wl,-z,relro"
+export CFLAGS="%{optflags} -fno-strict-aliasing"
+export CXXFLAGS="$CFLAGS -std=gnu++11"
 
 aclocal -I m4
 autoconf
-autoreconf -vi
 
 %configure \
     --with-help \
     --with-libsamplerate \
 %if 0%{?fedora} >= 26
     --disable-dynamic-loading \
+    --with-portaudio=local \
 %endif
 %ifnarch %{ix86} x86_64
     --disable-sse 
@@ -165,7 +166,7 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 %changelog
 
-* Wed Oct 11 2017 Unitedrpms Project <unitedrpms AT protonmail DOT com> - 2.1.3-4-git761bd6b
+* Wed Oct 11 2017 Unitedrpms Project <unitedrpms AT protonmail DOT com> - 2.1.3-4-git31b820b
 - Rebuilt for soundtouch
 
 * Tue Sep 05 2017 David Vásquez <davidva AT tutanota DOT com> - 2.1.3-3-git761bd6b
