@@ -1,12 +1,12 @@
 %global realname audacity
-%global commit0 31b820b47c9f43873f318abe2209e4b4d34c79ec
+%global commit0 d6ee9bf9758977ca1fb9358401edc125c62bb1b2
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
 Name: audacity-freeworld
 
-Version: 2.1.3
-Release: 4%{?gver}%{dist}
+Version: 2.2.0
+Release: 2%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
 License: GPLv2
