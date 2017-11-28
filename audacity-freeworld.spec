@@ -3,10 +3,12 @@
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
+%bcond_without system_ffmpeg
+
 Name: audacity-freeworld
 
 Version: 2.2.0
-Release: 2%{?gver}%{dist}
+Release: 3%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
 License: GPLv2
@@ -53,7 +55,9 @@ BuildRequires: libappstream-glib
 %endif
 BuildRequires: libmad-devel 
 BuildRequires: twolame-devel
-# BuildRequires: ffmpeg-devel
+%if %{with system_ffmpeg}
+BuildRequires: ffmpeg-devel
+%endif
 BuildRequires: lame-devel
 BuildRequires: python2-devel
 BuildRequires: libudev-devel
@@ -84,7 +88,11 @@ autoconf
 
 %configure \
     --with-help \
+%if %{with system_ffmpeg}
+    --with-ffmpeg=system \
+%else
     --with-libsamplerate \
+%endif
 %if 0%{?fedora} >= 26
     --disable-dynamic-loading \
     --with-portaudio=local \
@@ -165,6 +173,9 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
+
+* Mon Nov 27 2017 Unitedrpms Project <unitedrpms AT protonmail DOT com> - 2.2.0-3-gitd6ee9bf
+- Enabled System ffmpeg #https://github.com/UnitedRPMs/issues/issues/15
 
 * Wed Oct 11 2017 Unitedrpms Project <unitedrpms AT protonmail DOT com> - 2.1.3-4-git31b820b
 - Rebuilt for soundtouch
