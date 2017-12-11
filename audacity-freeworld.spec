@@ -80,12 +80,8 @@ This build has support for mp3 and ffmpeg import/export.
 
 %build
 
-export CFLAGS="%{optflags} -fno-strict-aliasing"
-%if 0%{?fedora} >= 27
-export CXXFLAGS="$CFLAGS -std=gnu++11 --param ggc-min-expand=3 --param ggc-min-heapsize=5120"
-%else
+export CFLAGS="%{optflags} -fno-strict-aliasing -Wno-error=sign-compare -Wno-error=unused-const-variable -Wno-error=implicit-fallthrough -Wno-error=maybe-uninitialized -Wno-error=pointer-compare -Wno-error=format-truncation"
 export CXXFLAGS="$CFLAGS -std=gnu++11"
-%endif
 
 aclocal -I m4
 autoconf
