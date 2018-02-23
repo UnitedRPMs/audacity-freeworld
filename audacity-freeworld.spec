@@ -19,8 +19,7 @@ Conflicts: %{realname}
 Source0: https://github.com/audacity/audacity/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 # PATCH-FIX-OPENSUSE audacity-flacversion.patch davejplater@gmail.com -- Patch to fix build against libflac 1.3.1+.
 Patch1: audacity-flacversion.patch
-Patch2: audacity-fix-nonsense.patch
-Patch3: audacity-no_buildstamp.patch
+Patch2: audacity-no_buildstamp.patch
 
 Provides: audacity-nonfree = %{version}-%{release}
 Provides: audacity = %{version}-%{release}
