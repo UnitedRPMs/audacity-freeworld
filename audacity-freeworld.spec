@@ -1,5 +1,5 @@
 %global realname audacity
-%global commit0 26d72bea9acacf8d4d2d18aaaa0831022480c8c9
+%global commit0 f665e6da2b0bf9d889f65ee59e8d507c4bca2de8
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
@@ -7,7 +7,7 @@
 
 Name: audacity-freeworld
 
-Version: 2.2.1
+Version: 2.2.2
 Release: 3%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
@@ -174,6 +174,9 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
+
+* Thu Feb 22 2018 Unitedrpms Project <unitedrpms AT protonmail DOT com> - 2.2.2-3-gitf665e6d
+- Updated to 2.2.2-3-gitf665e6d
 
 * Sun Dec 10 2017 Unitedrpms Project <unitedrpms AT protonmail DOT com> - 2.2.1-3-git26d72be
 - Updated to 2.2.1-3-git26d72be
