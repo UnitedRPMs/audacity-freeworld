@@ -8,7 +8,7 @@
 Name: audacity-freeworld
 
 Version: 2.2.2
-Release: 3%{?gver}%{dist}
+Release: 4%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
 License: GPLv2
@@ -54,7 +54,7 @@ BuildRequires: libappstream-glib
 BuildRequires: libmad-devel 
 BuildRequires: twolame-devel
 %if %{with system_ffmpeg}
-BuildRequires: ffmpeg-devel
+BuildRequires: ffmpeg-devel >= 4.0
 %endif
 BuildRequires: lame-devel
 BuildRequires: python2-devel
@@ -172,6 +172,9 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
+
+* Thu Apr 26 2018 Unitedrpms Project <unitedrpms AT protonmail DOT com> 2.2.2-4-gitf665e6d  
+- Automatic Mass Rebuild
 
 * Thu Feb 22 2018 Unitedrpms Project <unitedrpms AT protonmail DOT com> - 2.2.2-3-gitf665e6d
 - Updated to 2.2.2-3-gitf665e6d
