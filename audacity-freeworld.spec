@@ -8,7 +8,7 @@
 Name: audacity-freeworld
 
 Version: 2.2.2
-Release: 4%{?gver}%{dist}
+Release: 5%{?gver}%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
 License: GPLv2
@@ -172,6 +172,9 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
+
+* Thu Jul 19 2018 Unitedrpms Project <unitedrpms AT protonmail DOT com> 2.2.2-5-gitf665e6d 
+- Automatic Mass Rebuild 
 
 * Thu Apr 26 2018 Unitedrpms Project <unitedrpms AT protonmail DOT com> 2.2.2-4-gitf665e6d  
 - Automatic Mass Rebuild
