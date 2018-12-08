@@ -4,4 +4,5 @@ RPMS/*
 SPECS/*
 SRPMS/*
 audacity-*.tar.gz
+.directory
 
