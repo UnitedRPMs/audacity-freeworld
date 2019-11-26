@@ -3,6 +3,7 @@ BUILDROOT/*
 RPMS/*
 SPECS/*
 SRPMS/*
-audacity-*.tar.gz
+*.tar.gz
 .directory
+*.rpm
 
