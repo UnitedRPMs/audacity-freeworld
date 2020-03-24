@@ -5,6 +5,8 @@
 
 %bcond_without system_ffmpeg
 
+%define _legacy_common_support 1
+
 Name: audacity-freeworld
 
 Version: 2.3.3
