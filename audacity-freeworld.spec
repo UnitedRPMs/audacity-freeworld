@@ -162,7 +162,8 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 %dir %{_datadir}/%{realname}
 %{_datadir}/%{realname}/EQDefaultCurves.xml
 %{_datadir}/%{realname}/nyquist/
-%{_datadir}/%{realname}/plug-ins/
+%{_libdir}/audacity/libsuil_x11.so
+%{_libdir}/audacity/libsuil_x11_in_gtk3.so
 %{_mandir}/man*/*
 %{_datadir}/applications/*
 %{_datadir}/appdata/%{realname}.appdata.xml
