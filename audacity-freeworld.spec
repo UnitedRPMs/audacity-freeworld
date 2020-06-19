@@ -26,10 +26,8 @@ Provides: audacity-nonfree = %{version}-%{release}
 Provides: audacity = %{version}-%{release}
 
 BuildRequires: gcc-c++
-BuildRequires: automake
-BuildRequires: autoconf
+BuildRequires: cmake
 BuildRequires: gettext-devel
-BuildRequires: libtool
 BuildRequires: alsa-lib-devel
 BuildRequires: desktop-file-utils
 BuildRequires: expat-devel
@@ -79,34 +77,19 @@ This build has support for mp3 and ffmpeg import/export.
 %autosetup -n audacity-%{commit0} -p0 
 
 %build
-
-export CFLAGS="%{optflags} -fno-strict-aliasing"
-export CXXFLAGS="$CFLAGS -std=gnu++11"
-
-
-aclocal -I m4
-autoconf
-
-%configure \
-    --with-help \
-%if %{with system_ffmpeg}
-    --with-ffmpeg=system \
-%else
-    --with-libsamplerate \
-%endif
-%if 0%{?fedora} >= 25
-    --disable-dynamic-loading \
-    --with-portaudio=local \
-%endif
-%ifnarch %{ix86} x86_64
-    --disable-sse 
-%endif
-
-make %{?_smp_mflags} V=0
+mkdir build
+pushd build
+%cmake -DCMAKE_BUILD_TYPE=Release ..
+%make_build
+popd
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
-rm -Rf $RPM_BUILD_ROOT%{_datadir}/%{realname}/include
+pushd build
+%make_install
+popd
+
+%check
+ctest -V %{?_smp_mflags}
 
 %if 0%{?rhel} >= 8 || 0%{?fedora} 
 if appstream-util --help | grep -q replace-screenshots ; then
@@ -152,9 +135,6 @@ if [ $1 -eq 0 ] ; then
     update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 fi
 
-%posttrans
-gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %files -f %{realname}.lang
@@ -162,19 +142,25 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 %dir %{_datadir}/%{realname}
 %{_datadir}/%{realname}/EQDefaultCurves.xml
 %{_datadir}/%{realname}/nyquist/
-%{_libdir}/audacity/libsuil_x11.so
-%{_libdir}/audacity/libsuil_x11_in_gtk3.so
 %{_mandir}/man*/*
 %{_datadir}/applications/*
 %{_datadir}/appdata/%{realname}.appdata.xml
 %{_datadir}/pixmaps/*
 %{_datadir}/icons/hicolor/*/apps/%{realname}.*
 %{_datadir}/mime/packages/*
+%{_libdir}/audacity/suil_x11.so
+%{_libdir}/audacity/suil_x11_in_gtk3.so
+%{_datadir}/audacity/plug-ins/
+%{_datadir}/icons/hicolor/*/audacity.png
 %doc %{_datadir}/doc/*
 %doc lib-src/libnyquist/nyquist/license.txt lib-src/libnyquist/nyquist/Readme.txt
 
 
 %changelog
+
+* Fri Jun 12 2020 Unitedrpms Project <unitedrpms AT protonmail DOT com> 2.4.1-8
+- Enabled missed plugins https://github.com/UnitedRPMs/issues/issues/54#issue-638136786
+- Changed to cmake
 
 * Thu May 21 2020 Unitedrpms Project <unitedrpms AT protonmail DOT com> 2.4.1-7
 - Updated to 2.4.1
