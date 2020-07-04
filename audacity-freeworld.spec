@@ -1,5 +1,5 @@
 %global realname audacity
-%global commit0 1322b40a9c76409793c68fab761b92f56409840d
+%global commit0 16d52f63a4183bba77ef7305d14622958dc0d1d5
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
@@ -9,7 +9,7 @@
 
 Name: audacity-freeworld
 
-Version: 2.4.1
+Version: 2.4.2
 Release: 7%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
@@ -54,7 +54,7 @@ BuildRequires: libappstream-glib
 BuildRequires: libmad-devel 
 BuildRequires: twolame-devel
 %if %{with system_ffmpeg}
-BuildRequires: ffmpeg-devel >= 4.1
+BuildRequires: ffmpeg-devel >= 4.3
 %endif
 BuildRequires: lame-devel
 BuildRequires: python2-devel
@@ -157,6 +157,9 @@ fi
 
 
 %changelog
+
+* Wed Jul 01 2020 Unitedrpms Project <unitedrpms AT protonmail DOT com> 2.4.2-7
+- Updated to 2.4.2
 
 * Fri Jun 12 2020 Unitedrpms Project <unitedrpms AT protonmail DOT com> 2.4.1-8
 - Enabled missed plugins https://github.com/UnitedRPMs/issues/issues/54#issue-638136786
