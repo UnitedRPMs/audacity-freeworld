@@ -1,5 +1,5 @@
 %global realname audacity
-%global commit0 16d52f63a4183bba77ef7305d14622958dc0d1d5
+%global commit0 de50f55f615786480d8ab2b19a5ae384f08004c2
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
@@ -19,8 +19,6 @@ URL:     http://audacity.sourceforge.net
 
 Conflicts: %{realname}
 Source0: https://github.com/audacity/audacity/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
-# PATCH-FIX-OPENSUSE audacity-flacversion.patch davejplater@gmail.com -- Patch to fix build against libflac 1.3.1+.
-Patch: audacity-flacversion.patch
 
 Provides: audacity-nonfree = %{version}-%{release}
 Provides: audacity = %{version}-%{release}
@@ -77,6 +75,11 @@ This build has support for mp3 and ffmpeg import/export.
 %autosetup -n audacity-%{commit0} -p0 
 
 %build
+
+# src/RevisionIdent.h is in src/.gitignore and may be missing,
+# what leads to build errors, but it's empty in release tarballs
+[ ! -f src/RevisionIdent.h ] && echo ' ' > src/RevisionIdent.h
+
 mkdir build
 pushd build
 %cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -142,6 +145,7 @@ fi
 %dir %{_datadir}/%{realname}
 %{_datadir}/%{realname}/EQDefaultCurves.xml
 %{_datadir}/%{realname}/nyquist/
+%{_datadir}/%{realname}/modules/
 %{_mandir}/man*/*
 %{_datadir}/applications/*
 %{_datadir}/appdata/%{realname}.appdata.xml
