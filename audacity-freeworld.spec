@@ -1,5 +1,5 @@
 %global realname audacity
-%global commit0 de50f55f615786480d8ab2b19a5ae384f08004c2
+%global commit0 d5d4c46a3f6ae59e63ec79336def5139dbf04f48
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
@@ -9,7 +9,7 @@
 
 Name: audacity-freeworld
 
-Version: 2.4.2
+Version: 3.0.0
 Release: 7%{dist}
 Summary: Multitrack audio editor
 Group:   Applications/Multimedia
@@ -19,6 +19,7 @@ URL:     http://audacity.sourceforge.net
 
 Conflicts: %{realname}
 Source0: https://github.com/audacity/audacity/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
+#Source1: https://github.com/audacity/wxWidgets/archive/Audacity-2.4.2.tar.gz#/%{name}-wxWidgets.tar.gz
 
 Provides: audacity-nonfree = %{version}-%{release}
 Provides: audacity = %{version}-%{release}
@@ -44,7 +45,7 @@ BuildRequires: soxr-devel
 BuildRequires: vamp-plugin-sdk-devel >= 2.0
 BuildRequires: zip
 BuildRequires: zlib-devel
-BuildRequires: wxGTK3-devel
+BuildRequires: compat-wxGTK3-gtk2-devel
 BuildRequires: autoconf
 %if 0%{?rhel} >= 8 || 0%{?fedora} 
 BuildRequires: libappstream-glib
@@ -57,9 +58,28 @@ BuildRequires: ffmpeg-devel >= 4.3
 BuildRequires: lame-devel
 BuildRequires: python2-devel
 BuildRequires: libudev-devel
+BuildRequires: make 
+BuildRequires: git	
+BuildRequires: gcc-c++
+
+BuildRequires: pkgconfig(QtGui)
+BuildRequires: pkgconfig(Qt5Widgets)
+
+BuildRequires:  gtk2-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libjpeg-devel
+
+
 # For new symbols in portaudio
 Requires:      portaudio%{?_isa} >= 19-16
 Requires:      ffmpeg
+
+# Anyway it works
+Provides: libwx_baseu-3.1.so()(64bit)
+Provides: libwx_baseu_net-3.1.so()(64bit)
+Provides: libwx_gtk2u_core-3.1.so()(64bit)
+Provides: libwx_gtk2u_html-3.1.so()(64bit)
+Provides: libwx_gtk2u_qa-3.1.so()(64bit)
 
 
 %description
@@ -76,20 +96,30 @@ This build has support for mp3 and ffmpeg import/export.
 
 %build
 
+#pushd wxWidgets-Audacity-2.4.2
+#mkdir buildgtk
+#cd buildgtk
+#../configure --with-cxx=14 --with-gtk=3 
+#make -j2
+#popd
+
+#If the path to wxWidgets isn't in PATH, then add the option:
+#-DwxWidgets_CONFIG_EXECUTABLE=<path to>/wx-config
+#------------------------------------------------------
+
+
 # src/RevisionIdent.h is in src/.gitignore and may be missing,
 # what leads to build errors, but it's empty in release tarballs
 [ ! -f src/RevisionIdent.h ] && echo ' ' > src/RevisionIdent.h
 
+
 mkdir build
-pushd build
-%cmake -DCMAKE_BUILD_TYPE=Release ..
-%make_build
-popd
+%cmake -B build -DCMAKE_BUILD_TYPE=Release -Daudacity_use_wxwidgets=local 
+%make_build -C build
+
 
 %install
-pushd build
-%make_install
-popd
+%make_install -C build
 
 %check
 ctest -V %{?_smp_mflags}
@@ -152,8 +182,9 @@ fi
 %{_datadir}/pixmaps/*
 %{_datadir}/icons/hicolor/*/apps/%{realname}.*
 %{_datadir}/mime/packages/*
-%{_libdir}/audacity/suil_x11.so
-%{_libdir}/audacity/suil_x11_in_gtk3.so
+%{_libdir}/audacity/libsuil*.so
+%{_libdir}/audacity/libwx*.so
+%{_libdir}/audacity/libsuil*.so
 %{_datadir}/audacity/plug-ins/
 %{_datadir}/icons/hicolor/*/audacity.png
 %doc %{_datadir}/doc/*
@@ -161,6 +192,9 @@ fi
 
 
 %changelog
+
+* Mon Mar 15 2021 Unitedrpms Project <unitedrpms AT protonmail DOT com> 3.0.0-7
+- Updated to 3.0.0
 
 * Wed Jul 01 2020 Unitedrpms Project <unitedrpms AT protonmail DOT com> 2.4.2-7
 - Updated to 2.4.2
